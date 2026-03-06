@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Il tuo CV Creator Veloce</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 /* =========================================
-   STILI DELL'INTERFACCIA (Invariati)
+   INTERFACCIA NEON (Invariata)
    ========================================= */
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial, sans-serif;
 background:#050510;
 color:#00f7ff;
 overflow-x:hidden;
@@ -53,7 +53,6 @@ box-shadow:0 0 25px #00f7ff;
 border-radius:15px;
 }
 
-/* Aggiunto stile per il tag select */
 input, textarea, select {
 width:100%;
 padding:10px;
@@ -61,7 +60,8 @@ margin-bottom:10px;
 background:black;
 border:1px solid #00f7ff;
 color:#00f7ff;
-box-sizing: border-box; /* Previene sbordamenti */
+box-sizing: border-box;
+font-family: Arial, sans-serif;
 }
 
 .checkbox-group{
@@ -83,6 +83,11 @@ color:white;
 cursor:pointer;
 box-shadow:0 0 15px #ff00ff;
 font-weight: bold;
+transition: 0.3s;
+}
+
+button:hover {
+background: #cc00cc;
 }
 
 .credits{
@@ -96,128 +101,62 @@ border-top:1px solid #444;
 background:#02020a;
 }
 
-@media (max-width:700px){
-.container{
-flex-direction:column;
-padding:10px;
-}
-.page-title{
-font-size:26px;
-}
+.input-label {
+display: block;
+margin-top: 10px;
+margin-bottom: 5px;
+font-size: 14px;
+font-weight: bold;
 }
 
-@media print{
-.stars,.card:first-child,.credits,.page-title{display:none;}
-}
-
-/* =========================================
-   STILI DEL CURRICULUM GENERATO (Anteprima)
-   ========================================= */
-
-/* Rendiamo il contenitore del CV come un foglio A4 bianco per un'anteprima realistica */
+/* Anteprima a video (stile foglio bianco) */
 .cv-paper {
-    background: #ffffff;
-    color: #333333;
-    padding: 30px;
-    border-radius: 5px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+background: #ffffff;
+color: #333333;
+padding: 30px;
+border-radius: 5px;
+font-family: Arial, sans-serif;
+box-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
 
-/* Contenitore Intestazione (Foto + Dati) */
 .cv-header {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    margin-bottom: 20px;
+display: flex;
+gap: 20px;
+align-items: center;
+border-bottom: 2px solid #007BFF;
+padding-bottom: 15px;
+margin-bottom: 20px;
 }
 
 #cv_foto_preview {
-    width: 130px;
-    height: 130px;
-    object-fit: cover;
-    border-radius: 50%;
-    display: none; /* Nascosta finché non si carica */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+width: 100px;
+height: 100px;
+object-fit: cover;
+border-radius: 5px;
+display: none;
 }
 
-.cv-header-text p {
-    margin: 5px 0;
-    font-size: 14px;
+.section-title {
+font-weight: bold;
+color: #007BFF;
+margin-top: 15px;
+border-bottom: 1px solid #007BFF;
+padding-bottom: 3px;
 }
 
-.cv-section {
-    margin-top: 20px;
-}
-.cv-section p {
-    white-space: pre-wrap; /* Mantiene gli a capo delle textarea */
-    font-size: 14px;
-    line-height: 1.5;
+.cv-paper p {
+white-space: pre-wrap;
+font-size: 14px;
+line-height: 1.5;
+margin: 5px 0;
 }
 
-/* STILE 1: MODERNO */
-.stile-moderno .cv-header {
-    border-bottom: 3px solid #007BFF;
-    padding-bottom: 15px;
+@media (max-width:700px){
+.container{ flex-direction:column; padding:10px; }
+.page-title{ font-size:26px; }
 }
-.stile-moderno h1 {
-    color: #007BFF;
-    margin: 0 0 10px 0;
-    font-size: 32px;
-}
-.stile-moderno .section-title {
-    color: #007BFF;
-    border-bottom: 1px solid #007BFF;
-    padding-bottom: 5px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 15px;
-    letter-spacing: 1px;
-}
-
-/* STILE 2: ELEGANTE */
-.stile-elegante {
-    font-family: 'Georgia', serif;
-}
-.stile-elegante .cv-header {
-    flex-direction: column; /* Impila foto e testo */
-    text-align: center;
-    border-bottom: 1px solid #aaa;
-    padding-bottom: 25px;
-}
-.stile-elegante h1 {
-    font-size: 36px;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-    color: #2c3e50;
-    text-transform: uppercase;
-}
-.stile-elegante .section-title {
-    text-align: center;
-    position: relative;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-style: italic;
-    font-size: 18px;
-    color: #2c3e50;
-}
-.stile-elegante .section-title::after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 2px;
-    background: #2c3e50;
-    margin: 8px auto 0;
-}
-
-/* Etichette per i nuovi input */
-.input-label {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: bold;
+@media print{
+.stars,.card:first-child,.credits,.page-title{display:none;}
 }
 </style>
 </head>
@@ -225,21 +164,17 @@ font-size:26px;
 <body>
 
 <div class="stars"></div>
-
-<div class="page-title">
-Il tuo CV Creator Veloce
-</div>
+<div class="page-title">Il tuo CV Creator Veloce</div>
 
 <div class="container">
 
 <div class="card">
-
 <h2>Inserisci i tuoi dati</h2>
 
 <label class="input-label">Stile Grafico:</label>
 <select id="stile_cv">
-    <option value="stile-moderno">Stile Moderno (Blu, Dinamico)</option>
-    <option value="stile-elegante">Stile Elegante (Classico, Centrato)</option>
+    <option value="moderno">Stile Moderno (Professionale, Blu)</option>
+    <option value="elegante">Stile Elegante (Classico, Centrato)</option>
 </select>
 
 <label class="input-label">Foto Profilo (opzionale):</label>
@@ -261,63 +196,42 @@ Il tuo CV Creator Veloce
 <textarea id="formazione" placeholder="Formazione" rows="3"></textarea>
 <textarea id="competenze" placeholder="Competenze" rows="3"></textarea>
 <textarea id="social" placeholder="Canali social (LinkedIn, Portfolio ecc.)" rows="2"></textarea>
-<textarea id="privacy" placeholder="Autorizzo il trattamento dei dati personali ai sensi del GDPR" rows="2"></textarea>
+<textarea id="privacy" placeholder="Autorizzo il trattamento dei dati personali..." rows="2"></textarea>
 
 <div class="buttons">
-<button onclick="generaCV()">Genera CV</button>
+<button onclick="aggiornaAnteprima()">Genera Anteprima</button>
 <button onclick="scaricaPDF()">Scarica PDF</button>
 <button onclick="condividiPDF()">Condividi PDF</button>
 </div>
-
 </div>
 
 <div class="card" style="padding: 10px;">
-
-    <div id="cv-preview-area" class="cv-paper stile-moderno">
-        
+    <div class="cv-paper">
         <div class="cv-header">
-            <img id="cv_foto_preview" src="" alt="Foto Profilo">
-            <div class="cv-header-text">
-                <h1 id="cv_nome">Nome Cognome</h1>
-                <p><strong>Indirizzo:</strong> <span id="cv_indirizzo"></span></p>
-                <p><strong>Email:</strong> <span id="cv_email"></span></p>
-                <p><strong>Telefono:</strong> <span id="cv_telefono"></span></p>
-                <p><strong>Patente:</strong> <span id="cv_patente"></span> | <strong>Automunito:</strong> <span id="cv_auto"></span></p>
+            <img id="cv_foto_preview" src="" alt="Foto">
+            <div>
+                <h1 id="cv_nome" style="margin:0 0 10px 0; color:#007BFF;">Nome Cognome</h1>
+                <p><strong style="color:black;">Indirizzo:</strong> <span id="cv_indirizzo"></span></p>
+                <p><strong style="color:black;">Email:</strong> <span id="cv_email"></span> | <strong style="color:black;">Tel:</strong> <span id="cv_telefono"></span></p>
+                <p><strong style="color:black;">Patente:</strong> <span id="cv_patente">No</span> | <strong style="color:black;">Auto:</strong> <span id="cv_auto">No</span></p>
             </div>
         </div>
 
-        <div class="cv-section">
-            <div class="section-title">Profilo</div>
-            <p id="cv_profilo"></p>
-        </div>
+        <div class="section-title">Profilo</div>
+        <p id="cv_profilo"></p>
 
-        <div class="cv-section">
-            <div class="section-title">Esperienza</div>
-            <p id="cv_esperienza"></p>
-        </div>
+        <div class="section-title">Esperienza</div>
+        <p id="cv_esperienza"></p>
 
-        <div class="cv-section">
-            <div class="section-title">Formazione</div>
-            <p id="cv_formazione"></p>
-        </div>
+        <div class="section-title">Formazione</div>
+        <p id="cv_formazione"></p>
 
-        <div class="cv-section">
-            <div class="section-title">Competenze</div>
-            <p id="cv_competenze"></p>
-        </div>
+        <div class="section-title">Competenze</div>
+        <p id="cv_competenze"></p>
 
-        <div class="cv-section">
-            <div class="section-title">Canali social</div>
-            <p id="cv_social"></p>
-        </div>
-
-        <div class="cv-section">
-            <div class="section-title">Autorizzazione</div>
-            <p id="cv_privacy" style="font-size: 12px; color: #666;"></p>
-        </div>
-
+        <div class="section-title">Canali social</div>
+        <p id="cv_social"></p>
     </div>
-
 </div>
 
 </div>
@@ -333,81 +247,180 @@ prof.giu.sale1@gmail.com
 </div>
 
 <script>
-// Funzione per caricare e mostrare la foto in tempo reale
+let fotoBase64 = null;
+
+// Gestione della foto caricata
 function caricaFoto(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
+            fotoBase64 = e.target.result;
             const img = document.getElementById('cv_foto_preview');
-            img.src = e.target.result;
+            img.src = fotoBase64;
             img.style.display = 'block';
         }
         reader.readAsDataURL(file);
     }
 }
 
-function generaCV(){
-    // Cambia la classe CSS in base allo stile scelto nel menu a tendina
-    const stileScelto = document.getElementById('stile_cv').value;
-    document.getElementById('cv-preview-area').className = 'cv-paper ' + stileScelto;
-
-    // Popola i campi di testo
+// Aggiorna solo la parte visiva a schermo (Anteprima)
+function aggiornaAnteprima(){
     document.getElementById('cv_nome').innerText = document.getElementById('nome').value || "Nome Cognome";
     document.getElementById('cv_indirizzo').innerText = document.getElementById('indirizzo').value;
     document.getElementById('cv_email').innerText = document.getElementById('email').value;
     document.getElementById('cv_telefono').innerText = document.getElementById('telefono').value;
-
     document.getElementById('cv_patente').innerText = document.getElementById('patente').checked ? "Sì" : "No";
     document.getElementById('cv_auto').innerText = document.getElementById('auto').checked ? "Sì" : "No";
-
     document.getElementById('cv_profilo').innerText = document.getElementById('profilo').value;
     document.getElementById('cv_esperienza').innerText = document.getElementById('esperienza').value;
     document.getElementById('cv_formazione').innerText = document.getElementById('formazione').value;
     document.getElementById('cv_competenze').innerText = document.getElementById('competenze').value;
     document.getElementById('cv_social').innerText = document.getElementById('social').value;
-    document.getElementById('cv_privacy').innerText = document.getElementById('privacy').value;
 }
 
-// Configurazione standard per la libreria html2pdf
-function getPDFOptions() {
-    return {
-        margin:       10,
-        filename:     'Curriculum_Vitae.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+// CORE DEL PROGRAMMA: Genera il VERO file PDF riga per riga (Impaginazione Perfetta)
+function creaDocumentoPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const stile = document.getElementById('stile_cv').value;
+    
+    let y = 20; // Coordinata verticale di partenza
+
+    // Recupero Dati
+    let nome = document.getElementById('nome').value || "Nome Cognome";
+    let contatti = `${document.getElementById('indirizzo').value} | Email: ${document.getElementById('email').value} | Tel: ${document.getElementById('telefono').value}`;
+    let extra = `Patente: ${document.getElementById('patente').checked ? "Sì" : "No"} | Automunito: ${document.getElementById('auto').checked ? "Sì" : "No"}`;
+
+    // Disegno Intestazione in base allo stile
+    if (stile === "moderno") {
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 123, 255); // Blu
+        doc.setFontSize(24);
+        doc.text(nome, 15, y);
+        y += 8;
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(50, 50, 50);
+        doc.setFontSize(10);
+        doc.text(contatti, 15, y);
+        y += 6;
+        doc.text(extra, 15, y);
+        y += 15;
+    } else {
+        doc.setFont("times", "bold");
+        doc.setTextColor(40, 40, 40); // Grigio Scuro Elegante
+        doc.setFontSize(26);
+        doc.text(nome, 105, y, { align: "center" });
+        y += 8;
+
+        doc.setFont("times", "normal");
+        doc.setTextColor(80, 80, 80);
+        doc.setFontSize(11);
+        doc.text(contatti, 105, y, { align: "center" });
+        y += 6;
+        doc.text(extra, 105, y, { align: "center" });
+        y += 15;
+    }
+
+    // Inserimento Foto (se presente) posizionata in alto a destra
+    if (fotoBase64) {
+        try {
+            // Posizione standard: x=160, y=15, larghezza=35, altezza=35
+            doc.addImage(fotoBase64, 'JPEG', 160, 15, 35, 35);
+        } catch(e) { console.log("Errore inserimento immagine"); }
+    }
+
+    // Funzione intelligente per aggiungere blocchi di testo e gestire i salti di pagina
+    function aggiungiSezione(titolo, testo) {
+        if (!testo || testo.trim() === "") return;
+
+        // Se siamo troppo vicini al fondo, crea una nuova pagina
+        if (y > 260) {
+            doc.addPage();
+            y = 20;
+        }
+
+        // Titolo Sezione
+        if (stile === "moderno") {
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(0, 123, 255);
+            doc.setFontSize(14);
+            doc.text(titolo.toUpperCase(), 15, y);
+            y += 2;
+            doc.setDrawColor(0, 123, 255);
+            doc.line(15, y, 195, y); // Linea sotto il titolo
+            y += 7;
+        } else {
+            doc.setFont("times", "bolditalic");
+            doc.setTextColor(40, 40, 40);
+            doc.setFontSize(16);
+            doc.text(titolo, 105, y, { align: "center" });
+            y += 7;
+        }
+
+        // Testo Sezione
+        doc.setFont(stile === "moderno" ? "helvetica" : "times", "normal");
+        doc.setTextColor(20, 20, 20);
+        doc.setFontSize(11);
+
+        // Spezza il testo per farlo rientrare nei margini (larghezza max 180)
+        let righe = doc.splitTextToSize(testo, 180);
+        
+        // Stampa riga per riga gestendo il cambio pagina automatico
+        for(let i=0; i<righe.length; i++) {
+            if(y > 280) { // Se tocca il fondo
+                doc.addPage();
+                y = 20;
+            }
+            doc.text(righe[i], 15, y);
+            y += 5.5; // Interlinea
+        }
+        y += 6; // Spazio extra prima della prossima sezione
+    }
+
+    aggiungiSezione("Profilo", document.getElementById('profilo').value);
+    aggiungiSezione("Esperienza Lavorativa", document.getElementById('esperienza').value);
+    aggiungiSezione("Formazione", document.getElementById('formazione').value);
+    aggiungiSezione("Competenze", document.getElementById('competenze').value);
+    aggiungiSezione("Canali Social", document.getElementById('social').value);
+
+    // Footer per la Privacy
+    let privacy = document.getElementById('privacy').value;
+    if (privacy) {
+        if (y > 275) doc.addPage();
+        doc.setFont(stile === "moderno" ? "helvetica" : "times", "italic");
+        doc.setTextColor(120, 120, 120);
+        doc.setFontSize(8);
+        let righePrivacy = doc.splitTextToSize(privacy, 180);
+        doc.text(righePrivacy, 15, 290 - (righePrivacy.length * 4));
+    }
+
+    return doc;
 }
 
 function scaricaPDF(){
-    const element = document.getElementById('cv-preview-area');
-    const opt = getPDFOptions();
-    
-    // Genera e scarica il PDF preservando la grafica esatta!
-    html2pdf().set(opt).from(element).save();
+    aggiornaAnteprima(); // Aggiorna prima i dati
+    let doc = creaDocumentoPDF();
+    doc.save("Curriculum_Vitae.pdf");
 }
 
 async function condividiPDF(){
-    const element = document.getElementById('cv-preview-area');
-    const opt = getPDFOptions();
+    aggiornaAnteprima();
+    let doc = creaDocumentoPDF();
+    let blob = doc.output("blob");
+    let file = new File([blob], "Curriculum_Vitae.pdf", {type:"application/pdf"});
 
-    try {
-        // Genera il PDF come "Blob" (file in memoria)
-        const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-        const file = new File([pdfBlob], "Curriculum_Vitae.pdf", {type:"application/pdf"});
-
-        if(navigator.share){
+    if(navigator.share){
+        try{
             await navigator.share({
                 title:"Curriculum Vitae",
                 files:[file]
             });
-        }else{
-            alert("Condivisione non supportata su questo dispositivo/browser. Il PDF verrà scaricato normalmente.");
-            scaricaPDF();
-        }
-    } catch(e) {
-        console.error("Errore durante la condivisione:", e);
+        }catch(e){ console.log(e); }
+    }else{
+        alert("Condivisione non supportata. Il PDF verrà scaricato.");
+        scaricaPDF();
     }
 }
 </script>
